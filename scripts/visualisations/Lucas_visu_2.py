@@ -3,77 +3,86 @@ import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 
 
-def tri_par_bulles(arr,update):
+def tri_par_bulles(arr):
     n = len(arr)
-    count=0
+    
     for i in range(n):
         for j in range(0, n-i-1):
-            count+=1
             if arr[j] > arr[j+1]:
                 arr[j], arr[j+1] = arr[j+1], arr[j]
-                update(arr.copy(),count)
-                yield arr
+            yield arr
 
-def tri_par_insertion(l,update):
+def tri_par_insertion(l):
     N = len(l)
-    count=0
     for i in range(1,N):
         cle = l[i]
         j = i-1
-        count+=1
         while j>=0 and l[j] > cle:
             l[j+1] = l[j]
             j = j-1
-            count+=1
-            update(l.copy(),count)
             yield l
 
         l[j+1] = cle
-    return l
+        yield l
 
-def tri_rapid(arr,update):
-    if len(arr) <= 1:
-        yield arr
-        return arr
-    pivot = arr[len(arr) // 2]
-    left = [x for x in arr if x < pivot]
-    middle = [x for x in arr if x == pivot]
-    right = [x for x in arr if x > pivot]
-    arr=[left+middle+right]
-    update(arr)
+def tri_rapide(arr, low, high,update):
+    if low < high:
+        pi = yield from partition(arr, low, high,update) 
+        yield from tri_rapide(arr, low, pi - 1,update)
+        yield from tri_rapide(arr, pi + 1, high,update)
     yield arr
-    return tri_rapid(left,update) + middle + tri_rapid(right,update)
 
-
-def merge_sort(arr,update):
-    if len(arr) <= 1:
-        return arr
+def partition(arr, low, high,update):
     
-    def merge(left, right):
-        result = []
-        i = j = 0
+    pivot = arr[high]
+    i = low - 1
+    for j in range(low, high):
         
-        while i < len(left) and j < len(right):
-            if left[i] < right[j]:
-                result.append(left[i])
-                i += 1
-            else:
-                result.append(right[j])
-                j += 1
+        if arr[j] < pivot:
+            i += 1
+            arr[i], arr[j] = arr[j], arr[i]
+        yield arr
         
-        result.extend(left[i:])
-        result.extend(right[j:])
-        return result
+    arr[i + 1], arr[high] = arr[high], arr[i + 1]
+    yield arr
+    return i + 1  
 
-    mid = len(arr) // 2
-    left_half = merge_sort(arr[:mid],update)
-    right_half = merge_sort(arr[mid:],update)
-    r= merge(left_half,right_half)
-    yield r
-    return merge(left_half, right_half)
+
+def tri_fusion(arr, left, right,update):
+    if left < right:
+        mid = (left + right) // 2
+        yield from tri_fusion(arr, left, mid,update)
+        yield from tri_fusion(arr, mid + 1, right,update)
+        yield from fusion(arr, left, mid, right)
+    yield arr
+
+def fusion(arr, left, mid, right):
+    gauche = arr[left:mid + 1]
+    droite = arr[mid + 1:right + 1]
+    i = j = 0
+    k = left
+    while i < len(gauche) and j < len(droite):
+        if gauche[i] <= droite[j]:
+            arr[k] = gauche[i]
+            i += 1
+        else:
+            arr[k] = droite[j]
+            j += 1
+        k += 1
+        yield arr
+    while i < len(gauche):
+        arr[k] = gauche[i]
+        i += 1
+        k += 1
+        yield arr
+    while j < len(droite):
+        arr[k] = droite[j]
+        j += 1
+        k += 1
+        yield arr
 
 def Visualisation(arr):
-    fig,(ax1,ax2,ax3,ax4) = plt.subplots(1,4)
+    fig,((ax1,ax2),(ax3,ax4)) = plt.subplots(2,2)
     global bars1 ,bars2,bars3,bars4
     bars1 = ax1.bar(range(len(arr)),arr,color = 'green')
     bars2 = ax2.bar(range(len(arr)),arr,color = 'orange')
@@ -81,55 +90,85 @@ def Visualisation(arr):
     bars4 = ax4.bar(range(len(arr)),arr,color = 'pink')
 
 
-    def update(arr,count):
+    def update(arr):
         for bar,height in zip(bars1,arr):
             bar.set_height(height)
-        ax1.set_title(f'Tri bulles - nb Itérations: {count}')
-        plt.pause(0.05)
-    def update2(arr,count):
+        ax1.set_title(f'Tri bulles - nb Itérations: {count1}')
+        plt.pause(0.01)
+    def update2(arr):
         for bar,height in zip(bars2,arr):
             bar.set_height(height)
-        ax2.set_title(f'Tri insertion - nb Itérations: {count}')
-        plt.pause(0.05)
+        ax2.set_title(f'Tri insertion - nb Itérations: {count2}')
+        plt.pause(0.01)
     def update3(arr):
         for bar,height in zip(bars3,arr):
             bar.set_height(height)
-        ax3.set_title(f'Tri insertion - nb Itérations:')
-        plt.pause(0.05)
+        ax3.set_title(f'Tri rapide - nb Itérations: {count3}')
+        plt.pause(0.01)
     def update4(arr):
         for bar,height in zip(bars4,arr):
             bar.set_height(height)
-        ax4.set_title(f'Tri fusion- nb Itérations:')
-        plt.pause(0.05)
+        ax4.set_title(f'Tri fusion- nb Itérations: {count4}')
+        plt.pause(0.01)
     
     arr_bulles=arr.copy()
     arr_inser=arr.copy()
     arr_rapid=arr.copy()
     arr_fusion=arr.copy()
 
-    bubble_gen=tri_par_bulles(arr_bulles,update)
-    insertion_gen=tri_par_insertion(arr_inser,update2)
-    rapid_gen=tri_rapid(arr_rapid,update3)
-    fusion_gen=merge_sort(arr_fusion,update4)
+    bubble_gen=tri_par_bulles(arr_bulles)
+    insertion_gen=tri_par_insertion(arr_inser)
+    rapid_gen=tri_rapide(arr_rapid,0,len(arr_rapid)-1,update3)
+    fusion_gen=tri_fusion(arr_fusion,0,len(arr_fusion)-1,update4)
 
-    while True:
-        try:
-            next(bubble_gen)  
-        except StopIteration:
-            break
+    global count1,count2,count3,count4
+    count1=0
+    count2=0
+    count3=0
+    count4=0
+    v1=True
+    v2=True
+    v3=True
+    v4=True
 
+
+    while v1==True or v2==True or v3==True or v4==True:
+        
         try:
-            next(insertion_gen)  
+            arr=next(bubble_gen)
+            count1+=1
+            update(arr)  
         except StopIteration:
-            break
+            v1=False
+            pass
         try:
-            next(rapid_gen)  
+            arr=next(insertion_gen)
+            count2+=1
+            update2(arr)  
         except StopIteration:
-            break
+            v2=False
+            pass
+        try:
+            arr=next(rapid_gen)
+            count3+=1
+            update3(arr)  
+        except StopIteration:
+            v2=False
+            pass
+        try:
+            arr=next(fusion_gen)
+            count4+=1
+            update4(arr)  
+        except StopIteration:
+            v2=False
+            pass
+
+        
+        
 
     plt.show()
 
-random_values = [random.randint(0, 100) for _ in range(50)]
+random_values = [random.randint(0, 125) for _ in range(50)]
 
 Visualisation(random_values)
 
