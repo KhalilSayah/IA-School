@@ -1,8 +1,7 @@
-import random  
+import random
 import matplotlib.pyplot as plt
-import matplotlib.animation as animation
+import time
 
-# Definition des fonctions de tri 
 
 def tri_par_bulles(arr):
     n = len(arr)
@@ -10,103 +9,71 @@ def tri_par_bulles(arr):
         for j in range(0, n-i-1):
             if arr[j] > arr[j+1]:
                 arr[j], arr[j+1] = arr[j+1], arr[j]
-    
-    return arr
-                
+            yield arr
 
-def tri_par_insertion(l):
-    N = len(l)
-    for i in range(1,N):
-        cle = l[i]
+
+def tri_par_insertion(arr):
+    N = len(arr)
+    for i in range(1, N):
+        cle = arr[i]
         j = i-1
-
-        while j>=0 and l[j] > cle:
-            l[j+1] = l[j]
-            j = j-1
-
-        l[j+1] = cle
-    return l
-
-def tri_rapid(arr):
-    if len(arr) <= 1:
-        return arr
-    pivot = arr[len(arr) // 2]
-    left = [x for x in arr if x < pivot]
-    middle = [x for x in arr if x == pivot]
-    right = [x for x in arr if x > pivot]
-    return tri_rapid(left) + middle + tri_rapid(right)
+        while j >= 0 and arr[j] > cle:
+            arr[j+1] = arr[j]
+            j -= 1
+            yield arr
+        arr[j+1] = cle
+        yield arr
 
 
-## Visualition des 3 tris :
+def update_func1(arr, count, bars, ax1):
+    for bar, height in zip(bars, arr):
+        bar.set_height(height)
+    ax1.set_title(f'Tri à bulles - Itérations: {count}')
+    plt.pause(0.01)
 
 
-def visualiser_tri_par_bulles(arr):
-    fig, ax = plt.subplots()
-    barres = ax.bar(range(len(arr)), arr, color='blue')
-
-    def mise_a_jour(arr):
-        for rect, val in zip(barres, arr):
-            rect.set_height(val)
-
-    ani = animation.FuncAnimation(
-        fig, mise_a_jour, frames=tri_par_bulles(arr), interval=100, repeat=False
-    )
-    
-    plt.show()
+def update_func2(arr, count, bars, ax2):
+    for bar, height in zip(bars, arr):
+        bar.set_height(height)
+    ax2.set_title(f'Tri par insertion - Itérations: {count}')
+    plt.pause(0.01)
 
 
 valeurs_aleatoires = [random.randint(0, 100) for _ in range(50)]
-visualiser_tri_par_bulles(valeurs_aleatoires)
+arr_bubble = valeurs_aleatoires.copy()
+arr_insertion = valeurs_aleatoires.copy()
 
 
+fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(10, 10))
+bars1 = ax1.bar(range(len(arr_bubble)), arr_bubble, color='blue')
+bars2 = ax2.bar(range(len(arr_insertion)), arr_insertion, color='green')
 
-def visualiser_tri_par_insertion(arr):
-    fig, ax = plt.subplots()
-    barres = ax.bar(range(len(arr)), arr, color='green')
-
-    def mise_a_jour(arr):
-        for rect, val in zip(barres, arr):
-            rect.set_height(val)
-
-    ani = animation.FuncAnimation(
-        fig, mise_a_jour, frames=tri_par_insertion(arr), interval=100, repeat=False
-    )
-    
-    plt.show()
+ax1.set_title('Tri à bulles')
+ax2.set_title('Tri par insertion')
 
 
-valeurs_aleatoires = [random.randint(0, 100) for _ in range(50)]
-visualiser_tri_par_insertion(valeurs_aleatoires)
-                             
-                
-                             
-
-def partition(arr, debut, fin): #pour le pivot 
-    pivot = arr[fin]
-    i = debut - 1
-    for j in range(debut, fin):
-        if arr[j] <= pivot:
-            i += 1
-            arr[i], arr[j] = arr[j], arr[i]
-        yield arr  
-    arr[i+1], arr[fin] = arr[fin], arr[i+1]
-    yield arr  
-    return i+1
-
-def visualiser_tri_rapide(arr):
-    fig, ax = plt.subplots()
-    barres = ax.bar(range(len(arr)), arr, color='red')
-
-    def mise_a_jour(arr):
-        for rect, val in zip(barres, arr):
-            rect.set_height(val)
-
-    ani = animation.FuncAnimation(
-        fig, mise_a_jour, frames=tri_rapid(arr), interval=100, repeat=False
-    )
-    
-    plt.show()
+bubble_gen = tri_par_bulles(arr_bubble)
+insertion_gen = tri_par_insertion(arr_insertion)
 
 
-valeurs_aleatoires = [random.randint(0, 100) for _ in range(50)]
-visualiser_tri_rapide(valeurs_aleatoires)
+count1 = 0
+count2 = 0
+
+
+while True:
+    try:
+        arr_bubble = next(bubble_gen)
+        count1 += 1
+        update_func1(arr_bubble, count1, bars1, ax1)
+    except StopIteration:
+        break
+
+while True:
+    try:
+        arr_insertion = next(insertion_gen)
+        count2 += 1
+        update_func2(arr_insertion, count2, bars2, ax2)
+    except StopIteration:
+        break
+
+plt.show()
