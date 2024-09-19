@@ -9,6 +9,7 @@ def rechercheBinaire(list,n):
     d=len(list)-1
     m=(g+d)//2
     while g<=d :
+        yield m
         if list[m]==n:
                 return m
         elif list[m]>n:
@@ -52,4 +53,4 @@ def visualize_recherche_linaire(l:list[int], cible:int):
 
 
 random_values = [random.randint(0, 100) for _ in range(50)]
-visualize_recherche_linaire(random_values, 38)
+visualize_recherche_linaire(random_values, 25)
