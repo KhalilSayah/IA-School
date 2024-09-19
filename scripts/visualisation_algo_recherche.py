@@ -2,13 +2,13 @@ import random
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 
-from ..scripts.visualisation_algo_recherche import recherche_linaire_graph
+from algorithmes import recherche_linaire_graph
 
 
 
         
 def visualize_recherche_linaire(l:list[int], cible:int):
-    fig,ax = plt.subplots(())
+    fig,ax = plt.subplots()
 
     bars = ax.bar(
         range(len(l)),
