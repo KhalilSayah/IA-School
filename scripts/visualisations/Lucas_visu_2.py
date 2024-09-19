@@ -25,14 +25,14 @@ def tri_par_insertion(l):
         l[j+1] = cle
         yield l
 
-def tri_rapide(arr, low, high,update):
+def tri_rapide(arr, low, high):
     if low < high:
-        pi = yield from partition(arr, low, high,update) 
-        yield from tri_rapide(arr, low, pi - 1,update)
-        yield from tri_rapide(arr, pi + 1, high,update)
+        pi = yield from partition(arr, low, high) 
+        yield from tri_rapide(arr, low, pi - 1)
+        yield from tri_rapide(arr, pi + 1, high)
     yield arr
 
-def partition(arr, low, high,update):
+def partition(arr, low, high):
     
     pivot = arr[high]
     i = low - 1
@@ -48,11 +48,11 @@ def partition(arr, low, high,update):
     return i + 1  
 
 
-def tri_fusion(arr, left, right,update):
+def tri_fusion(arr, left, right):
     if left < right:
         mid = (left + right) // 2
-        yield from tri_fusion(arr, left, mid,update)
-        yield from tri_fusion(arr, mid + 1, right,update)
+        yield from tri_fusion(arr, left, mid)
+        yield from tri_fusion(arr, mid + 1, right)
         yield from fusion(arr, left, mid, right)
     yield arr
 
@@ -118,8 +118,8 @@ def Visualisation(arr):
 
     bubble_gen=tri_par_bulles(arr_bulles)
     insertion_gen=tri_par_insertion(arr_inser)
-    rapid_gen=tri_rapide(arr_rapid,0,len(arr_rapid)-1,update3)
-    fusion_gen=tri_fusion(arr_fusion,0,len(arr_fusion)-1,update4)
+    rapid_gen=tri_rapide(arr_rapid,0,len(arr_rapid)-1)
+    fusion_gen=tri_fusion(arr_fusion,0,len(arr_fusion)-1)
 
     global count1,count2,count3,count4
     count1=0
