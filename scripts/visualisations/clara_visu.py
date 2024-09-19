@@ -51,8 +51,8 @@ def visualiser_recherche_binaire(liste: list[int], cible: int):
 
     plt.show()
 
-# Test avec des valeurs aléatoires triées
-valeurs_aleatoires = sorted([random.randint(0, 100) for _ in range(50)])  # Liste triée nécessaire pour la recherche binaire
+
+valeurs_aleatoires = sorted([random.randint(0, 100) for _ in range(50)])  
 visualiser_recherche_binaire(valeurs_aleatoires, 23)
 
 
