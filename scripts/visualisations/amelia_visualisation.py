@@ -47,6 +47,7 @@ visualize_recherche_lineaire(values,83)
 """
 
 def recherche_dichotomique_graph(d,target):
+    d.sort()
     debut,fin = 0,len(d) -1
 
     while debut <= fin:
@@ -59,7 +60,7 @@ def recherche_dichotomique_graph(d,target):
             debut = mid + 1
         else:
             fin = mid - 1
-    
+
 
 def visualize_recherche_binaire(l:list[int], cible:int):
     fig,ax = plt.subplots()
