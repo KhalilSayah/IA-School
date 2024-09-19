@@ -60,7 +60,7 @@ def recherche_dichotomique_graph(d,target):
             debut = mid + 1
         else:
             fin = mid - 1
-
+    return None
 
 def visualize_recherche_binaire(l:list[int], cible:int):
     fig,ax = plt.subplots()
