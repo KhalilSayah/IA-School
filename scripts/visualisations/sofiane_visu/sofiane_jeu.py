@@ -30,7 +30,7 @@ grid_data = np.array([
 start = (0,0) 
 finish = (n - 1, m - 1)
 
-
+# ANIMATION GRILLE DEBUT 
 fig,ax = plt.subplots(figsize = (6,6) )
 im = ax.imshow(grid_data, cmap='gray_r')
 
@@ -38,11 +38,3 @@ ax.scatter(start[1], start[0], color='magenta', s=100, label='Start')
 ax.scatter(finish[1], finish[0], color='red', s=100, label='End')
 ax.legend()
 plt.show()
-"""
-# Afficher la matrice sous forme de grille
-
-plt.grid(visible=True)  # Afficher la grille de l'axe
-plt.matshow(grid_data, cmap='grey')  # 'coolwarm' est une autre palette de couleurs
-
-
-"""
