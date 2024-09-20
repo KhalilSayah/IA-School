@@ -98,3 +98,4 @@ def visualize_recherche_binaire(l:list[int], cible:int):
     
 
 visualize_recherche_binaire(random_values, 23)
+
