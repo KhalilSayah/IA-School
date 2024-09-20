@@ -17,9 +17,10 @@ def rechercheBinaire(list,n):
         else:
             g=m +1
         m=(g+d)//2
-    return d
+    return None
         
 def visualize_recherche_linaire(l:list[int], cible:int):
+    l.sort()
     fig,ax = plt.subplots()
 
     bars = ax.bar(
