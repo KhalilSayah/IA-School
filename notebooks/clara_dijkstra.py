@@ -34,7 +34,7 @@ def tracer(matrix, start, end, path=None, title="Grille avec Départ et Arrivée
 
     plt.title(title)
     plt.legend(loc='upper right')
-    plt.gca().invert_yaxis()  # Inverser l'axe y pour que le (0,0) soit en haut à gauche
+    plt.gca().invert_yaxis() 
     plt.grid(True, which='both', color='lightgrey', linewidth=0.5)
     plt.xticks(np.arange(-0.5, matrix.shape[1], 1), [])
     plt.yticks(np.arange(-0.5, matrix.shape[0], 1), [])
@@ -63,7 +63,7 @@ def dijkstra(matrix, start, end):
             neighbor = (current[0] + direction[0], current[1] + direction[1])
             if (0 <= neighbor[0] < rows and 0 <= neighbor[1] < cols and 
                 matrix[neighbor] == 0 and not visited[neighbor]):
-                new_dist = current_dist + 1  # Poids uniforme
+                new_dist = current_dist + 1  
                 if new_dist < distance[neighbor]:
                     distance[neighbor] = new_dist
                     previous[neighbor] = current
@@ -83,10 +83,10 @@ def dijkstra(matrix, start, end):
 
 def main():
 
-    rows, cols = 20, 20  # Taille de la grille
-    obstacle_prob = 0.2    # Probabilité d'obstacle
-    start = (0, 0)         # Point de départ
-    end = (19, 19)         # Point d'arrivée (coin opposé)
+    rows, cols = 20, 20  
+    obstacle_prob = 0.2    
+    start = (0, 0)         
+    end = (19, 19)         
 
 
     matrix, start, end = grille(rows, cols, obstacle_prob, start, end)
