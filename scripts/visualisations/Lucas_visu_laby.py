@@ -22,49 +22,61 @@ im=ax.imshow(grid,cmap='gray_r')
 ax.scatter(start[0],start[1],color="Green",s=150,label="Départ")
 ax.scatter(fin[0],fin[1],color="Red",s=150,label="Fin")
 
-def dijkstra(matrix, start, end):
-    n = len(matrix)
-    dist = [float('inf')] * n  # Tableau des distances initialisé à l'infini
-    dist[start] = 0  # La distance depuis le départ
-    visited = [False] * n  # Tableau pour suivre les nœuds visités
-    previous = [None] * n  # Pour reconstruire le chemin
+def dijkstra_no_heap(grid, start, end):
+    n, m = grid.shape
+    distances = { (i, j): float('inf') for i in range(n) for j in range(m) }
+    distances[start] = 0
+    visited = { (i, j): False for i in range(n) for j in range(m) }
+    parents = {start: None}
+    explored_cells = []
 
-    for _ in range(n):
-        # Trouver le nœud avec la distance minimale non visité
-        min_dist = float('inf')
-        min_index = -1
+    directions = [(-1, 0), (1, 0), (0, -1), (0, 1)]  # Haut, Bas, Gauche, Droite
+
+    while True:
+        # Trouver la cellule non visitée avec la plus petite distance
+        min_distance = float('inf')
+        current_cell = None
         for i in range(n):
-            if not visited[i] and dist[i] < min_dist:
-                min_dist = dist[i]
-                min_index = i
+            for j in range(m):
+                if not visited[(i, j)] and distances[(i, j)] < min_distance:
+                    min_distance = distances[(i, j)]
+                    current_cell = (i, j)
 
-        if min_index == -1:  # Tous les nœuds visités ou inaccessible
+        # Si on n'a plus de cellules accessibles ou si on a atteint la destination
+        if current_cell is None or current_cell == end:
             break
 
-        visited[min_index] = True  # Marquer le nœud comme visité
+        x, y = current_cell
+        visited[current_cell] = True
 
-        # Mettre à jour les distances des voisins
-        for neighbor in range(n):
-            if matrix[min_index][neighbor] > 0:  # Si une arête existe
-                new_dist = dist[min_index] + matrix[min_index][neighbor]
-                if new_dist < dist[neighbor]:
-                    dist[neighbor] = new_dist
-                    previous[neighbor] = min_index
+        # Ajouter la case explorée à la liste pour l'animation
+        explored_cells.append(current_cell)
+
+        # Explorer les voisins
+        for direction in directions:
+            nx, ny = x + direction[0], y + direction[1]
+
+            if 0 <= nx < n and 0 <= ny < m and grid[nx, ny] == 0:  # Si la case est dans la grille et libre
+                new_distance = distances[(x, y)] + 1
+
+                if new_distance < distances[(nx, ny)]:
+                    distances[(nx, ny)] = new_distance
+                    parents[(nx, ny)] = (x, y)
 
     # Reconstruire le chemin
     path = []
-    current = end
-    while current is not None:
-        path.append(current)
-        current = previous[current]
-    path.reverse()
-
-    return dist[end], path 
+    cell = end
+    while cell is not None:
+        path.append(cell)
+        cell = parents.get(cell)
+    
+    path.reverse()  # Chemin dans le bon ordre
+    return explored_cells, path
 
 def update(arr):
     de
 
 
 
-#print(dijkstra(grid,0,24))
+#print(dijkstra_no_heap(grid,start,fin))
 plt.show()
