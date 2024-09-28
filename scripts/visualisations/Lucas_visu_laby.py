@@ -21,6 +21,9 @@ im=ax.imshow(grid,cmap='gray_r')
 
 ax.scatter(start[0],start[1],color="Green",s=150,label="Départ")
 ax.scatter(fin[0],fin[1],color="Red",s=150,label="Fin")
+plt.title("Grille du labyrinth")
+plt.plot(fin[0], fin[1], color='blue', linewidth=2, label='Chemin le plus court')
+plt.legend(loc='upper right')
 
 def dijkstra_no_heap(grid, start, end):
     n, m = grid.shape
@@ -68,15 +71,21 @@ def dijkstra_no_heap(grid, start, end):
     cell = end
     while cell is not None:
         path.append(cell)
+        update(path)
+        plt.pause(0.2)
         cell = parents.get(cell)
     
     path.reverse()  # Chemin dans le bon ordre
-    return explored_cells, path
+    print( explored_cells, path)
 
-def update(arr):
-    de
+def update(path=None):
+    if path:
+        y_coords, x_coords = zip(*path)
+        plt.plot(x_coords, y_coords, color='blue', linewidth=2, label='Chemin le plus court')
+        
 
+update()
 
+print(dijkstra_no_heap(grid,start,fin))
 
-#print(dijkstra_no_heap(grid,start,fin))
 plt.show()
